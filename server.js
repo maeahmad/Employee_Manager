@@ -147,10 +147,116 @@ function addRole() {
 
 //function to add an employee similar to role 
 function addEmployee() {
+    connection.query("select * from role", (err, roles) => {
+        if (err) throw err;
 
+
+        connection.query("select * from employee", (err, employees) => {
+            if (err) throw err;
+            inquirer.prompt([
+                {
+                    name: "firstName",
+                    type: "input",
+                    message: "Please, enter the employee's first name.",
+                },
+                {
+                    name: "lastName",
+                    type: "input",
+                    message: "Please, enter the employee's last name.",
+                },
+                {
+                    type: "list",
+                    name: "role",
+                    message: "Please, enter the employee's role",
+                    choices: roles.map((role) => role.title),
+                },
+                {
+                    type: "list",
+                    name: "manager",
+                    message: "Please, select the employee's manager.",
+                    choices: ["None", ...employees.map((employee) => `${employee.first_name} ${employee.last_name}`),
+                    ],
+                },
+            ])
+                .then((answers) => {
+                    const selectedRole = roles.find(
+                        (role) => role.title === answers.role
+                    );
+
+                    let managerId = null;
+                    if (answers.manager !== "None") {
+                        const selectedManager = employees.find(
+                            (employee) =>
+                                `${employee.first_name} ${employee.last_name}` ===
+                                answers.manager
+                        );
+                        managerId = selectedManager.id;
+                    }
+
+                    connection.query(
+                        "INSERT INTO employee SET ?",
+                        {
+                            first_name: answers.firstName,
+                            last_name: answers.lastName,
+                            role_id: selectedRole.id,
+                            manager_id: managerId,
+                        },
+                        (err) => {
+                            if (err) throw err;
+                            console.log("Employee added successfully!");
+                            start();
+                        }
+                    );
+                });
+        });
+    });
 }
 
-//function to update an employee role, need to find id of employee I would like to update from employee table. 1. select all from employee then 2. select the role I like to give that employee by quering the role table (2 query) use an update query. Use id of choicen role to adjust the employess new role. 
+// Function to update an employee role
 function updateEmployeeRole() {
+    connection.query("SELECT * FROM employee", (err, employees) => {
+        if (err) throw err;
 
+        connection.query("SELECT * FROM role", (err, roles) => {
+            if (err) throw err;
+
+            inquirer
+                .prompt([
+                    {
+                        name: "employee",
+                        type: "list",
+                        message: "Select the employee to update:",
+                        choices: employees.map(
+                            (employee) => `${employee.first_name} ${employee.last_name}`
+                        ),
+                    },
+                    {
+                        name: "role",
+                        type: "list",
+                        message: "Select the new role for the employee:",
+                        choices: roles.map((role) => role.title),
+                    },
+                ])
+                .then((answers) => {
+                    const selectedEmployee = employees.find(
+                        (employee) =>
+                            `${employee.first_name} ${employee.last_name}` ===
+                            answers.employee
+                    );
+                    const selectedRole = roles.find(
+                        (role) => role.title === answers.role
+                    );
+
+                    connection.query(
+                        "UPDATE employee SET role_id = ? WHERE id = ?",
+                        [selectedRole.id, selectedEmployee.id],
+                        (err) => {
+                            if (err) throw err;
+                            console.log("Employee role updated successfully!");
+                            start();
+                        }
+                    );
+                });
+        });
+    });
 }
