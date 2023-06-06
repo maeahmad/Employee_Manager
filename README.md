@@ -6,9 +6,8 @@ As a Fullstack Web Developer, I created an application that allow business owner
 https://github.com/maeahmad/Employee_Manager
 
 ![screencapture-courses-bootcampspot-courses-3173-assignments-50821-2023-06-05-22_53_12](https://github.com/maeahmad/Employee_Manager/assets/122010497/b3883579-7e61-4f66-912b-0cb98b0c3d31)
-
-
-https://watch.screencastify.com/v/LXkBsmedqX1mwN6tCsMm
+[
+https://watch.screencastify.com/v/d5F8ok42PPplGOuAUX8C
 
 
 # About
